@@ -127,7 +127,7 @@ def getScore():
 
         score_tag = "Analysis: <br>"+"Number of 1 mark questions correctly answered: "+str(pos_score_1m)+"<br>Number of 1 mark questions wrongly answered and marks deducted: "+str(neg_score_1m)+"<br>Number of 1 mark questions unanswered: "+str(unanswered_1m)+"<br><br>"+"Number of 2 mark questions correctly answered: "+str(pos_score_2m)+"<br>Number of 2 mark questions wrongly answered and marks deducted: "+str(neg_score_2m)+"<br>Number of 2 mark questions unanswered: "+str(unanswered_2m)+"<br><br>"+"positive score: "+str(pos)+"<br>negative score: "+str(neg)+"<br><br>"+"final score: "+str(pos - neg)+"<br>"
         with open("data.txt","a") as file:
-        	file.write('name: '+name+"\nurl: "+url+"\nscore: "+str(pos-neg));
+        	file.write('name: '+name+"\nurl: "+url+"\nscore: "+str(pos-neg)+"\n\n");
         return start_temp+form+ '<br></div><div class="card col-md-12">'+score_tag+end_temp
     else:
         return start_temp+form + '<br></div><div class="card col-md-12">' +("Error: "+str(res)+"Url down try again later")+end_temp
