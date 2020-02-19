@@ -1,12 +1,13 @@
 from flask import Flask, request
-import requests, urllib.request
+import requests, urllib.request, io
 from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
+
 start_temp = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"><link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"><title>Gate Score Calculator</title><style>body{margin: 5px;overflow-x: hidden;overflow-y: scroll;padding-left: 30px;font-family: poppins;cursor: context-menu;}html {scroll-behavior: smooth;}.center{display: block;margin: auto;}.card{padding: 20px;margin: 10px;border-radius: 2px;background-color: white;box-shadow: 0 10px 16px 0 rgba(0,0,0,0.2);transition: 0.3s;}.card-title{text-decoration: underline;}.display{height: 300px;}</style></head><body><br><br><div class="container"><div class="row"><div class="card col-md">'
 end_temp = '</div></div></div><script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script><script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script><script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script></body></html>'
-form = '<form action="/score" method = "POST"><div class="form-group"><label for="input1">Gate Responses url</label><input type="text" class="form-control" id="input 1" name="response-url"><small id="response-help" class="form-text text-muted">We will not share your response url.</small></div><button type="submit" class="btn btn-primary">Submit</button></form>'
+form = '<form action="/score" method = "POST"><div class="form-group"><label for="input2">Name</label><input type="text" class="form-control" id="input2" name="user-name" required></div><div class="form-group"><label for="input1">Gate Responses url</label><input type="text" class="form-control" id="input1" name="response-url" required><small id="response-help" class="form-text text-muted">We will not share your response url.</small></div><button type="submit" class="btn btn-primary">Submit</button></form>'
 
 @app.route('/')
 def index():
@@ -16,6 +17,7 @@ def index():
 def getScore():
     score_tag = ''
     url = request.form['response-url'];
+    name = request.form['user-name'];
     if(url == ''):
         return start_temp + form + '<br></div><div class="card col-md-12">' + 'Invalid' + end_temp;
     res = urllib.request.urlopen(url).getcode()
@@ -119,6 +121,8 @@ def getScore():
         neg = (neg_score_1m/3) + (2*neg_score_2m/3)
 
         score_tag = "Analysis: <br>"+"Number of 1 mark questions correctly answered: "+str(pos_score_1m)+"<br>Number of 1 mark questions wrongly answered and marks deducted: "+str(neg_score_1m)+"<br>Number of 1 mark questions unanswered: "+str(unanswered_1m)+"<br><br>"+"Number of 2 mark questions correctly answered: "+str(pos_score_2m)+"<br>Number of 2 mark questions wrongly answered and marks deducted: "+str(neg_score_2m)+"<br>Number of 2 mark questions unanswered: "+str(unanswered_2m)+"<br><br>"+"positive score: "+str(pos)+"<br>negative score: "+str(neg)+"<br><br>"+"final score: "+str(pos - neg)+"<br>"
+        with open("data.txt","a") as file:
+        	file.write('name: '+name+"\nurl: "+url+"\nscore: "+str(pos-neg));
         return start_temp+form+ '<br></div><div class="card col-md-12">'+score_tag+end_temp
     else:
         return start_temp+form + '<br></div><div class="card col-md-12">' +("Error: "+str(res)+"Url down try again later")+end_temp
