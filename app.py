@@ -13,6 +13,11 @@ form = '<form action="/score" method = "POST"><div class="form-group"><label for
 def index():
     return start_temp + form + end_temp;
 
+@app.route('/usrdata')
+def getData():
+	with open("data.txt","a") as file:
+		return Response(file.read(), mimetype='text/plain')
+
 @app.route('/score', methods = ['POST'])
 def getScore():
     score_tag = ''
