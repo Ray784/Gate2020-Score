@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, Response
 import requests, urllib.request, io
 from bs4 import BeautifulSoup
 
@@ -15,7 +15,7 @@ def index():
 
 @app.route('/usrdata')
 def getData():
-	with open("data.txt","a") as file:
+	with open("data.txt","r") as file:
 		return Response(file.read(), mimetype='text/plain')
 
 @app.route('/score', methods = ['POST'])
